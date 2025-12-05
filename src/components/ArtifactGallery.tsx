@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { loadArtifacts, getAllTags, loadToyboxConfig } from '../lib/artifactLoader';
 import { Artifact } from '../lib/types';
 import { ToyboxConfig } from '../lib/store';
+import { ArtifactCard } from './ArtifactCard';
 
 export function ArtifactGallery() {
   const [artifacts, setArtifacts] = useState<Artifact[]>([]);
@@ -203,54 +203,7 @@ export function ArtifactGallery() {
       {filteredAndSortedArtifacts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredAndSortedArtifacts.map((artifact) => (
-            <Link 
-              key={artifact.id} 
-              to={`/a/${artifact.id}`}
-              className="group border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col h-full bg-white hover:translate-y-[-2px]"
-            >
-              <div className="p-5 flex flex-col flex-grow">
-                <div className="flex items-start justify-between mb-3">
-                  <h2 className="text-xl font-semibold group-hover:text-blue-600 transition-colors">{artifact.title || 'Untitled Project'}</h2>
-                  <div className="flex gap-1">
-                    <span className={`text-xs px-2 py-0.5 rounded ${
-                      artifact.type === 'react' 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : artifact.type === 'svg' 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-purple-100 text-purple-800'
-                    }`}>
-                      {artifact.type === 'react' && 'React'}
-                      {artifact.type === 'svg' && 'SVG'}
-                      {artifact.type === 'mermaid' && 'Mermaid'}
-                    </span>
-                    <Link 
-                      to={`/standalone/${artifact.id}`}
-                      className="text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      onClick={(e) => e.stopPropagation()}
-                      title="View standalone without gallery wrapper"
-                    >
-                      Standalone
-                    </Link>
-                  </div>
-                </div>
-                
-                <p className="text-gray-600 mb-3 flex-grow line-clamp-3">{artifact.description || 'No description available'}</p>
-                
-                {artifact.tags && artifact.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mb-3">
-                    {artifact.tags.map(tag => (
-                      <span key={tag} className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                
-                <div className="text-sm text-gray-500">
-                  Updated: {new Date(artifact.updatedAt).toLocaleDateString()}
-                </div>
-              </div>
-            </Link>
+            <ArtifactCard key={artifact.id} artifact={artifact} />
           ))}
         </div>
       ) : (
