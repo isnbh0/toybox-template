@@ -121,15 +121,18 @@ npm run deploy
 
 Create new artifacts in the `src/artifacts/` directory:
 
-### Option 1: Single file artifact
+### Option 1: Single file with inline metadata
 ```tsx
 // src/artifacts/my-artifact.tsx
-export const metadata = {
-  id: "my-artifact",
-  name: "My Artifact",
-  type: "react" as const,
+import { ArtifactMetadata } from '@/lib/artifactLoader';
+
+export const metadata: ArtifactMetadata = {
+  title: "My Artifact",
+  type: "react",
   description: "A cool artifact",
-  created: new Date().toISOString()
+  tags: ["demo"],
+  createdAt: "2024-01-15",
+  updatedAt: "2024-01-15"
 };
 
 export default function MyArtifact() {
@@ -137,12 +140,40 @@ export default function MyArtifact() {
 }
 ```
 
-### Option 2: Directory-based artifact
+### Option 2: Separate metadata file
 ```tsx
-// src/artifacts/my-complex-artifact/index.tsx
-export { metadata } from './metadata';
-export { default } from './component';
+// src/artifacts/my-artifact.tsx
+export default function MyArtifact() {
+  return <div>Hello from my artifact!</div>;
+}
+
+// src/artifacts/my-artifact.metadata.ts (or .metadata.json)
+import { ArtifactMetadata } from '@/lib/artifactLoader';
+
+export const metadata: ArtifactMetadata = {
+  title: "My Artifact",
+  type: "react",
+  tags: ["demo"],
+  createdAt: "2024-01-15",
+  updatedAt: "2024-01-15"
+};
 ```
+
+### Option 3: Directory-based artifact
+```
+src/artifacts/my-complex-artifact/
+├── index.tsx          # Component
+├── metadata.ts        # Metadata (or metadata.json)
+└── styles.css         # Additional assets
+```
+
+### Metadata Options
+
+| Field | Description |
+|-------|-------------|
+| `hidden` | Hide from gallery (accessible via direct URL) |
+| `fullscreen` | Auto-fullscreen in standalone mode |
+| `underMaintenance` | Show maintenance warning banner |
 
 ## ⚙️ Configuration
 
