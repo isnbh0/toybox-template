@@ -19,12 +19,14 @@ This is a TOYBOX template - a React-based portfolio/gallery application for show
 - Artifacts are stored in `src/artifacts/` as `.tsx` files or in subdirectories with `index.tsx`
 - Static imports via Vite's `import.meta.glob()` for automatic discovery
 - Support for React, SVG, and Mermaid diagram types
-- Metadata defined within each artifact file
+- Metadata can be defined in external files or within component exports (see Metadata System below)
 
 **Key Components:**
 - `ArtifactLoader` (`src/lib/artifactLoader.ts`): Core system for discovering and loading artifacts
-- `ArtifactRunner` (`src/components/ArtifactRunner.tsx`): Renders individual artifacts
-- `ArtifactGallery` (`src/components/ArtifactGallery.tsx`): Main gallery view
+- `ArtifactRunner` (`src/components/ArtifactRunner.tsx`): Renders individual artifacts with standalone mode support
+- `ArtifactGallery` (`src/components/ArtifactGallery.tsx`): Main gallery view with filtering and search
+- `ArtifactCard` (`src/components/ArtifactCard.tsx`): Individual card with error boundary
+- `ErrorBoundary` (`src/components/ErrorBoundary.tsx`): Reusable error boundary component
 - UI components in `src/components/ui/`: shadcn/ui component library
 
 ## Development Commands
@@ -141,7 +143,79 @@ Create new artifacts in `src/artifacts/`:
 - Direct files: `src/artifacts/my-artifact.tsx`
 - Subdirectories: `src/artifacts/my-artifact/index.tsx`
 
-Each artifact should export metadata and a default React component.
+Each artifact should have metadata and export a default React component.
+
+### Metadata System
+
+Metadata can be provided in three ways (in priority order):
+
+1. **External TypeScript file** (highest priority):
+   - Direct: `src/artifacts/my-artifact.metadata.ts`
+   - Subdirectory: `src/artifacts/my-artifact/metadata.ts`
+
+2. **External JSON file**:
+   - Direct: `src/artifacts/my-artifact.metadata.json`
+   - Subdirectory: `src/artifacts/my-artifact/metadata.json`
+
+3. **Component export** (lowest priority):
+   ```tsx
+   export const metadata = { ... };
+   ```
+
+**Metadata Interface:**
+```typescript
+interface ArtifactMetadata {
+  title: string;
+  description?: string;
+  type: 'react' | 'svg' | 'mermaid';
+  tags: string[];
+  folder?: string;           // Logical grouping without changing file structure
+  createdAt: string;         // ISO date string
+  updatedAt: string;         // ISO date string
+  hidden?: boolean;          // Hide from gallery (still accessible via direct URL)
+  fullscreen?: boolean;      // Auto-fullscreen in standalone mode
+  underMaintenance?: boolean; // Show maintenance banner
+}
+```
+
+**Example TypeScript metadata file** (`my-artifact.metadata.ts`):
+```typescript
+import { ArtifactMetadata } from '../lib/artifactLoader';
+
+export const metadata: ArtifactMetadata = {
+  title: 'My Artifact',
+  description: 'A description of my artifact',
+  type: 'react',
+  tags: ['demo', 'example'],
+  createdAt: '2024-01-01',
+  updatedAt: '2024-01-15',
+};
+```
+
+**Example JSON metadata file** (`my-artifact.metadata.json`):
+```json
+{
+  "title": "My Artifact",
+  "description": "A description of my artifact",
+  "type": "react",
+  "tags": ["demo", "example"],
+  "createdAt": "2024-01-01",
+  "updatedAt": "2024-01-15"
+}
+```
+
+### Viewing Modes
+
+- **Gallery view** (`/a/:artifactName`): Shows artifact with metadata, tags, and navigation
+- **Standalone view** (`/standalone/:artifactName`): Clean presentation with optional fullscreen toggle
+
+### Gallery Features
+
+- **Type filtering**: Filter by React, SVG, or Mermaid
+- **Tag filtering**: Filter by any tag present in artifacts
+- **Text search**: Search across title, description, and tags
+- **Sorting**: By updated date, created date, or alphabetical
+- **Per-card error boundaries**: Individual card errors don't crash the gallery
 
 ## Build System
 
