@@ -42,19 +42,6 @@ Place artifacts in `src/artifacts/` as either:
 **Required Structure:**
 
 ```typescript
-import { ArtifactMetadata } from '@/lib/types';
-
-export const metadata: ArtifactMetadata = {
-  title: 'Component Name',
-  description: 'Brief description of what this artifact does',
-  type: 'react', // or 'svg', 'mermaid'
-  tags: ['interactive', 'demo'], // relevant tags
-  folder: 'Category Name', // optional grouping
-  createdAt: '2024-01-15T10:00:00Z', // Use `date -u +"%Y-%m-%dT%H:%M:%SZ"` to generate current UTC timestamp
-  updatedAt: '2024-01-15T10:00:00Z', // Use `date -u +"%Y-%m-%dT%H:%M:%SZ"` to generate current UTC timestamp
-  // underMaintenance: true, // ONLY set when explicitly requested - shows warning banner
-};
-
 const ComponentName: React.FC = () => {
   return (
     <div className="p-6">
@@ -66,6 +53,103 @@ const ComponentName: React.FC = () => {
 
 export default ComponentName;
 ```
+
+### Metadata System
+
+Metadata can be provided in three ways (in priority order):
+
+1. **External TypeScript file** (recommended for complex artifacts):
+   - Direct: `src/artifacts/my-artifact.metadata.ts`
+   - Subdirectory: `src/artifacts/my-artifact/metadata.ts`
+
+2. **External JSON file**:
+   - Direct: `src/artifacts/my-artifact.metadata.json`
+   - Subdirectory: `src/artifacts/my-artifact/metadata.json`
+
+3. **Component export** (simplest approach):
+   ```typescript
+   export const metadata: ArtifactMetadata = { ... };
+   ```
+
+**Metadata Interface:**
+
+```typescript
+interface ArtifactMetadata {
+  title: string;
+  description?: string;
+  type: 'react' | 'svg' | 'mermaid';
+  tags: string[];
+  folder?: string;           // Logical grouping without changing file structure
+  createdAt: string;         // ISO date string (use `date -u +"%Y-%m-%dT%H:%M:%SZ"`)
+  updatedAt: string;         // ISO date string
+  hidden?: boolean;          // Hide from gallery (still accessible via direct URL)
+  fullscreen?: boolean;      // Auto-fullscreen in standalone mode
+  underMaintenance?: boolean; // Show maintenance banner
+}
+```
+
+**Example with component export:**
+
+```typescript
+import { ArtifactMetadata } from '@/lib/artifactLoader';
+
+export const metadata: ArtifactMetadata = {
+  title: 'Component Name',
+  description: 'Brief description of what this artifact does',
+  type: 'react',
+  tags: ['interactive', 'demo'],
+  folder: 'Category Name',
+  createdAt: '2024-01-15T10:00:00Z',
+  updatedAt: '2024-01-15T10:00:00Z',
+};
+
+const ComponentName: React.FC = () => {
+  return <div className="p-6">{/* Your implementation */}</div>;
+};
+
+export default ComponentName;
+```
+
+**Example with external TypeScript metadata** (`my-artifact.metadata.ts`):
+
+```typescript
+import { ArtifactMetadata } from '@/lib/artifactLoader';
+
+export const metadata: ArtifactMetadata = {
+  title: 'My Artifact',
+  description: 'A description of my artifact',
+  type: 'react',
+  tags: ['demo', 'example'],
+  createdAt: '2024-01-01',
+  updatedAt: '2024-01-15',
+};
+```
+
+**Example with external JSON metadata** (`my-artifact.metadata.json`):
+
+```json
+{
+  "title": "My Artifact",
+  "description": "A description of my artifact",
+  "type": "react",
+  "tags": ["demo", "example"],
+  "createdAt": "2024-01-01",
+  "updatedAt": "2024-01-15"
+}
+```
+
+### Viewing Modes
+
+- **Gallery view** (`/a/:artifactName`): Shows artifact with metadata, tags, and navigation
+- **Standalone view** (`/standalone/:artifactName`): Clean presentation with optional fullscreen toggle
+
+### Gallery Features
+
+- **Type filtering**: Filter by React, SVG, or Mermaid
+- **Tag filtering**: Filter by any tag present in artifacts
+- **Text search**: Search across title, description, and tags
+- **Sorting**: By updated date, created date, or alphabetical
+- **Per-card error boundaries**: Individual card errors don't crash the gallery
 
 ### Styling Guidelines
 

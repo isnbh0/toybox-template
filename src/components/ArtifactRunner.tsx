@@ -3,8 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 // Import renderers
 import { SVGRenderer } from './renderers/SVGRenderer';
 import { MermaidRenderer } from './renderers/MermaidRenderer';
-// Import the new artifact loader utility
-import { getArtifact } from '../lib/artifactLoader';
+// Import the artifact loader utility
+import { getArtifact, getArtifactMetadata } from '../lib/artifactLoader';
 import { Artifact } from '../lib/types';
 import { MaintenanceBanner } from './MaintenanceBanner';
 
@@ -42,24 +42,17 @@ export function ArtifactRunner({ standalone = false }: ArtifactRunnerProps) {
         }
 
         setArtifactData(artifact);
-        
-        // Get the original metadata to check various preferences
-        const artifactsImports: Record<string, { default: React.ComponentType<any>; metadata?: import('../lib/artifactLoader').ArtifactMetadata }> = {
-          ...import.meta.glob("../artifacts/*.tsx", { eager: true }),
-          ...import.meta.glob("../artifacts/*/index.tsx", { eager: true }),
-        };
-        
-        const directPath = `../artifacts/${artifactName}.tsx`;
-        const subdirPath = `../artifacts/${artifactName}/index.tsx`;
-        const importedModule = artifactsImports[directPath] || artifactsImports[subdirPath];
-        
+
+        // Get metadata using the centralized loader (supports external metadata files)
+        const metadata = getArtifactMetadata(artifactName);
+
         // Check if artifact is under maintenance
-        if (importedModule?.metadata?.underMaintenance) {
+        if (metadata?.underMaintenance) {
           setIsUnderMaintenance(true);
         }
-        
+
         // Set initial fullscreen state based on metadata (only for standalone mode)
-        if (standalone && importedModule?.metadata?.fullscreen) {
+        if (standalone && metadata?.fullscreen) {
           setIsFullscreen(true);
         }
         
