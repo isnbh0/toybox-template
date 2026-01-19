@@ -37,9 +37,9 @@ export function SVGRenderer({ code, className = '' }: SVGRendererProps) {
       
       setSanitizedCode(sanitized);
       setError(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('SVG rendering error:', err);
-      setError(err.message || 'Failed to render SVG');
+      setError(err instanceof Error ? err.message : 'Failed to render SVG');
       setSanitizedCode('');
     }
   }, [code]);

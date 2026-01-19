@@ -46,9 +46,9 @@ export function MermaidRenderer({ code, className = '' }: MermaidRendererProps) 
         // Set the SVG code
         setSvgCode(svg);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Mermaid rendering error:', err);
-        setError(err.message || 'Failed to render Mermaid diagram');
+        setError(err instanceof Error ? err.message : 'Failed to render Mermaid diagram');
         setSvgCode('');
       }
     };

@@ -1,15 +1,18 @@
 import { Artifact } from './types';
 import { ToyboxConfig } from './store';
 
+// Type for dynamically loaded artifact components
+export type ArtifactComponent = React.ComponentType<Record<string, unknown>>;
+
 // Import both direct .tsx files and index.tsx files inside directories
 const directArtifactsImports: Record<string, {
-  default: React.ComponentType<any>;
+  default: ArtifactComponent;
   metadata?: ArtifactMetadata;
 }> = import.meta.glob('../artifacts/*.tsx', { eager: true });
 
 // Import index.tsx files from subdirectories
 const subdirArtifactsImports: Record<string, {
-  default: React.ComponentType<any>;
+  default: ArtifactComponent;
   metadata?: ArtifactMetadata;
 }> = import.meta.glob('../artifacts/*/index.tsx', { eager: true });
 
@@ -190,9 +193,9 @@ export function loadArtifacts(): Artifact[] {
  * Get a specific artifact by its name
  * This function allows access to hidden artifacts via direct URL
  */
-export function getArtifact(name: string): { 
-  artifact: Artifact | undefined; 
-  component: React.ComponentType<any> | undefined;
+export function getArtifact(name: string): {
+  artifact: Artifact | undefined;
+  component: ArtifactComponent | undefined;
 } {
   // Get artifact from cache (includes hidden artifacts)
   const allArtifacts = getAllArtifacts();
