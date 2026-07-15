@@ -61,14 +61,8 @@ let indexHtml = fs.readFileSync(indexPath, 'utf8');
 
 // Update title
 indexHtml = indexHtml.replace(
-  /<title>TOYBOX - [^<]+<\/title>/,
+  /<title>[^<]*<\/title>/,
   `<title>TOYBOX - ${username}</title>`
-);
-
-// Update base URL in script
-indexHtml = indexHtml.replace(
-  /const baseUrl = isProduction \? "\/[^"]+\/" : "\/";/,
-  `const baseUrl = isProduction ? "${baseUrl}" : "/";`
 );
 
 fs.writeFileSync(indexPath, indexHtml);
@@ -79,7 +73,7 @@ const notFoundPath = path.join(__dirname, '..', 'public', '404.html');
 let notFoundHtml = fs.readFileSync(notFoundPath, 'utf8');
 
 notFoundHtml = notFoundHtml.replace(
-  /<title>TOYBOX - [^<]+<\/title>/,
+  /<title>[^<]*<\/title>/,
   `<title>TOYBOX - ${username}</title>`
 );
 
@@ -97,18 +91,6 @@ aboutContent = aboutContent.replace(
 
 fs.writeFileSync(aboutPath, aboutContent);
 console.log('✅ Updated AboutPage.tsx');
-
-// Update GitHub workflow
-const workflowPath = path.join(__dirname, '..', '.github', 'workflows', 'deploy.yml');
-let workflowContent = fs.readFileSync(workflowPath, 'utf8');
-
-workflowContent = workflowContent.replace(
-  /BASE_URL: '\/[^']+\/'/,
-  `BASE_URL: '${baseUrl}'`
-);
-
-fs.writeFileSync(workflowPath, workflowContent);
-console.log('✅ Updated .github/workflows/deploy.yml');
 
 console.log('\n🎉 Configuration update complete!');
 console.log(`   GitHub Username: ${username}`);

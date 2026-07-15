@@ -1,13 +1,15 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import type { ArtifactMetadata } from '@/lib/artifactLoader';
 
-export const metadata = {
+export const metadata: ArtifactMetadata = {
   title: "TI-83 Style Calculator",
   description: "A TI-83 style scientific calculator with continuous scrolling display like the real TI-83",
   type: "react" as const,
   tags: ["calculator", "math", "utility", "ti-83", "graphing"],
-  date: "2025-07-13"
+  createdAt: "2025-07-13",
+  updatedAt: "2025-07-13"
 };
 
 interface DisplayLine {

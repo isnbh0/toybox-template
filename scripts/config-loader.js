@@ -45,7 +45,8 @@ export function loadConfig() {
     config.username = process.env.GITHUB_USERNAME;
   }
   if (process.env.GITHUB_REPOSITORY) {
-    config.repository = process.env.GITHUB_REPOSITORY;
+    // Accept both GitHub Actions' "owner/repo" format and a bare repo name.
+    config.repository = process.env.GITHUB_REPOSITORY.split('/').pop();
   }
   
   // Compute derived values

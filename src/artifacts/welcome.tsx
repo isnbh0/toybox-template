@@ -50,4 +50,3 @@ export const metadata = {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
 };
-//# sourceMappingURL=welcome.js.map

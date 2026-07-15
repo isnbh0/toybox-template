@@ -42,8 +42,8 @@ function loadGitHubConfig() {
     config.username = process.env.GITHUB_USERNAME;
   }
   if (process.env.GITHUB_REPOSITORY) {
-    // Extract just the repo name from "owner/repo" format
-    config.repository = process.env.GITHUB_REPOSITORY.split('/')[1];
+    // Accept both GitHub Actions' "owner/repo" format and a bare repo name.
+    config.repository = process.env.GITHUB_REPOSITORY.split('/').pop();
   }
   
   // Compute derived values

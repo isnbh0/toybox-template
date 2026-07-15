@@ -169,11 +169,11 @@ The configuration is automatically loaded in `vite.config.ts`. No manual import 
    - Updates `index.html` with username in title
    - Updates `public/404.html` with username
    - Updates `AboutPage.tsx` with repository link
-   - Updates GitHub Actions workflow with base URL
    - Updates `TOYBOX_CONFIG.json` with customization options
 
 3. **Build Process** → Configuration is injected:
    - Base URL is set for production builds
+   - GitHub Actions uses the same centralized configuration at build time
    - Environment variables are defined for runtime access
    - GitHub username and repository are available in components
 
